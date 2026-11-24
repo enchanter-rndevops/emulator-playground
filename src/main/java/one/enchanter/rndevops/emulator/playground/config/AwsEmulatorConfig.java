@@ -28,7 +28,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.sqs.SqsClient;
 
 /**
- * local, testからWAS Emulatorを使うConfig
+ * local, testからAWS Emulatorを使うConfig
  * AwsEmulatorConfig
  */
 @Profile( "awsemulator")

@@ -2,7 +2,7 @@ name: emulator-playground
 
 services:
   app:
-    image: backend-dev:latest
+    image: app-dev:latest
     ports:
       - "8080:8080"
       - "5005:5005"
@@ -36,17 +36,17 @@ services:
       - "${HOME}/.aws/emulator:${HOME}/.aws/emulator"
     mem_limit: 2g
 
-  fluent-bit:
-    image: fluent/fluent-bit:latest
-    environment:
-      HOME: "${HOME}"
-    volumes:
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - ./fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
-      - "${HOME}/.aws/emulator:${HOME}/.aws/emulator"
-      - "${HOME}/.aws/emulator/9297/emulator_credentials:${HOME}/.aws/credentials:ro"
-    networks:
-      - emulator-playground
+  # fluent-bit:
+  #   image: fluent/fluent-bit:latest
+  #   environment:
+  #     HOME: "${HOME}"
+  #   volumes:
+  #     - /var/lib/docker/containers:/var/lib/docker/containers:ro
+  #     - ./fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
+  #     - "${HOME}/.aws/emulator:${HOME}/.aws/emulator"
+  #     - "${HOME}/.aws/emulator/9297/emulator_credentials:${HOME}/.aws/credentials:ro"
+  #   networks:
+  #     - emulator-playground
 
   db:
     image: public.ecr.aws/docker/library/mysql:8.4
