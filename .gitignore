@@ -1,0 +1,8 @@
+./local
+*.local
+
+*.jar
+
+node_modules/
+
+target/

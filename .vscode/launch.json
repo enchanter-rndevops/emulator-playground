@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-Application",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "one.enchanter.rndevops.jester.playground.backend.BackendApplication",
+      "projectName": "backend",
+      "args": "",
+      "env": {
+        "SPRING_PROFILES_ACTIVE": "local",
+        "AWS_REGION": "ap-northeast-1",
+        "DB_HOST": "localhost"
+      }
+    },
+    {
+      "type": "java",
+      "name": "Debug Spring Boot in Docker",
+      "request": "attach",
+      "hostName": "localhost",
+      "port": 5005
+    }
+  ]
+}

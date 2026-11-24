@@ -1,0 +1,91 @@
+name: emulator-playground
+
+services:
+  app:
+    image: backend-dev:latest
+    ports:
+      - "8080:8080"
+      - "5005:5005"
+    environment:
+      # AWSエミュレータを使用する。
+      AWS_REGION: ap-northeast-1
+      SPRING_PROFILES_ACTIVE: local,awsemulator
+      # 本物AWSを使用する。
+      # SPRING_PROFILES_ACTIVE: local,awsreal
+      DB_HOST: db
+    volumes:
+      - ./:/app
+      - ~/.m2:/root/.m2
+      - ~/.aws/:/root/.aws/:ro
+    working_dir: /app
+    command: ./mvnw spring-boot:run -Dspring-boot.run.jvmArguments="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+    networks:
+      - emulator-playground
+
+  # AWS Emulator サービス。
+  aws-emulator:
+    image: aws-emulator
+    ports:
+      - "127.0.0.1:9297:9297"
+    networks:
+      - emulator-playground
+    command: ["-p", "9297"]
+    environment:
+      HOME: "${HOME}"
+    volumes:
+      - "${HOME}/.aws/emulator:${HOME}/.aws/emulator"
+    mem_limit: 2g
+
+  fluent-bit:
+    image: fluent/fluent-bit:latest
+    environment:
+      HOME: "${HOME}"
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
+      - "${HOME}/.aws/emulator:${HOME}/.aws/emulator"
+      - "${HOME}/.aws/emulator/9297/emulator_credentials:${HOME}/.aws/credentials:ro"
+    networks:
+      - emulator-playground
+
+  db:
+    image: public.ecr.aws/docker/library/mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: emulator
+      MYSQL_USER: emulator
+      MYSQL_PASSWORD: emulator
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test:
+        ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - emulator-playground
+
+  # 開発時はこれを使用する。DynamoDBのエンドポイントにこれを使用する。
+  # AWSエミュレータのエンドポイントを指定すると、データは永続化されない。
+  # テスト時はawsエミュレータを使用する。
+  dynamodb:
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data"
+    image: "amazon/dynamodb-local:latest"
+    ports:
+      - "8000:8000"
+    volumes:
+      - "dynamodb_data:/home/dynamodblocal/data"
+    working_dir: /home/dynamodblocal
+
+volumes:
+  db_data:
+  dynamodb_data:
+
+networks:
+  emulator-playground:
+    external: true
+    name: emulator-playground
