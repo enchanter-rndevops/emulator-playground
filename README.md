@@ -4,13 +4,6 @@ Spring Boot アプリケーションとAWS Emulatorをひとつのcompode.yaml�
 
 ## つかいかた
 
-/cloudformation にサンプルのStackがあります。
-このテンプレートからstackを作成してください。
-
-```
-$ awse cloudformation create-stack --stack-name emulator --template-body file://emulator.yaml --capabilities CAPABILITY_IAM
-```
-
 Spring Bootを実行するためのDockerイメージを作成。
 
 ```
@@ -21,6 +14,12 @@ $ docker build -t app-dev:1.0.0 .
 
 ```
 $ docker compose up -d
+```
+
+このテンプレートからstackを作成する。
+```
+$ cd cloudformation
+$ awse cloudformation create-stack --stack-name emulator --template-body file://emulator.yaml --capabilities CAPABILITY_IAM
 ```
 
 実行。PlaygroundControllerのMapping定義を参照し、パスを変更してください。
