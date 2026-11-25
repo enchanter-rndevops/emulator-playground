@@ -76,8 +76,9 @@ services:
   # AWSエミュレータのエンドポイントを指定すると、データは永続化されない。
   # テスト時はawsエミュレータを使用する。
   dynamodb:
-    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data"
     image: "amazon/dynamodb-local:latest"
+    # Dockerのボリュームを使用する場合、rootにする。
+    user: root
     ports:
       - "8000:8000"
     volumes:
@@ -85,6 +86,7 @@ services:
     working_dir: /home/dynamodblocal
     networks:
       - emulator-playground
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data"
 
 volumes:
   db_data:
@@ -92,5 +94,5 @@ volumes:
 
 networks:
   emulator-playground:
-    external: true
+    external : true
     name: emulator-playground

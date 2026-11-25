@@ -129,24 +129,30 @@ public class AwsEmulatorConfig {
     @Bean
     public DynamoDbClient dynamoDbClient(SdkHttpClient insecureApacheHttpClient) {
 
-        return DynamoDbClient.builder()
+        System.out.println("emulatorDynamodbEndpoint:"+emulatorDynamodbEndpoint);
+        System.out.println("emulatorDynamodbEndpointURI:"+URI.create(emulatorDynamodbEndpoint));
+
+        if(emulatorDynamodbEndpoint.isEmpty()){
+            return DynamoDbClient.builder()
+                .httpClient(insecureApacheHttpClient)
                 .endpointOverride(URI.create(emulatorDynamodbEndpoint))
                 .region(Region.of(emulatorRegion))
                 .credentialsProvider(
-                     StaticCredentialsProvider.create(
-                            AwsBasicCredentials.create("dummy", "dummy")))                
+                        ProfileCredentialsProvider.builder()
+                                .profileFile(PROFILE_FILE)
+                                .profileName("default")
+                                .build())
                 .build();
+        } else {
+            return DynamoDbClient.builder()
+                .endpointOverride(URI.create(emulatorDynamodbEndpoint))
+                .region(Region.of(emulatorRegion))
+                .credentialsProvider(
+                      StaticCredentialsProvider.create(
+                             AwsBasicCredentials.create("dummy", "dummy")))                
+                .build();
+        }
 
-        // return DynamoDbClient.builder()
-        //         .httpClient(insecureApacheHttpClient)
-        //         .endpointOverride(URI.create(emulatorDynamodbEndpoint))
-        //         .region(Region.of(emulatorRegion))
-        //         .credentialsProvider(
-        //                 ProfileCredentialsProvider.builder()
-        //                         .profileFile(PROFILE_FILE)
-        //                         .profileName("default")
-        //                         .build())
-        //         .build();
     }
 
     @Bean
