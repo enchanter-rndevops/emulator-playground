@@ -1,6 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: テスト環境を作成するCloudFormationサンプル
-#  awse cloudformation create-stack --stack-name emulator --template-body file://emulator.yaml --capabilities CAPABILITY_IAM
+# awse cloudformation create-stack --stack-name emulator --template-body file://emulator.yaml --capabilities CAPABILITY_IAM
+# awse cloudformation describe-stacks --stack-name emulator
 
 Parameters:
   EnvName:
@@ -12,7 +13,7 @@ Parameters:
       - prod
 
 Resources:
-  MyBucket:
+  SampleBucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub '${AWS::StackName}-${EnvName}-bucket-${AWS::AccountId}'

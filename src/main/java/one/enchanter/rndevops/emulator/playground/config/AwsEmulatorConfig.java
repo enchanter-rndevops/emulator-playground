@@ -17,11 +17,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.profiles.ProfileFile;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.lambda.LambdaClient;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -38,7 +41,8 @@ public class AwsEmulatorConfig {
     private static final ProfileFile PROFILE_FILE = ProfileFile.builder()
             .content(
                     Path.of(
-                            System.getProperty("user.home"),
+//                            System.getProperty("user.home"),
+                           "/root",
                             ".aws",
                             "emulator",
                             "9297",
@@ -94,9 +98,6 @@ public class AwsEmulatorConfig {
     @Bean
     public S3Client s3Client(SdkHttpClient insecureApacheHttpClient) {
 
-        System.out.println("emulatorEndpoint:" + emulatorEndpoint);
-        System.out.println("emulatorRegion:" + emulatorRegion);
-
         return S3Client.builder()
                 .httpClient(insecureApacheHttpClient)
                 .endpointOverride(URI.create(emulatorEndpoint))
@@ -111,6 +112,7 @@ public class AwsEmulatorConfig {
 
     @Bean
     public SqsClient sqsClient(SdkHttpClient insecureApacheHttpClient) {
+
         return SqsClient.builder()
                 .httpClient(insecureApacheHttpClient)
                 .endpointOverride(URI.create(emulatorEndpoint))
@@ -126,9 +128,33 @@ public class AwsEmulatorConfig {
 
     @Bean
     public DynamoDbClient dynamoDbClient(SdkHttpClient insecureApacheHttpClient) {
+
         return DynamoDbClient.builder()
-                .httpClient(insecureApacheHttpClient)
                 .endpointOverride(URI.create(emulatorDynamodbEndpoint))
+                .region(Region.of(emulatorRegion))
+                .credentialsProvider(
+                     StaticCredentialsProvider.create(
+                            AwsBasicCredentials.create("dummy", "dummy")))                
+                .build();
+
+        // return DynamoDbClient.builder()
+        //         .httpClient(insecureApacheHttpClient)
+        //         .endpointOverride(URI.create(emulatorDynamodbEndpoint))
+        //         .region(Region.of(emulatorRegion))
+        //         .credentialsProvider(
+        //                 ProfileCredentialsProvider.builder()
+        //                         .profileFile(PROFILE_FILE)
+        //                         .profileName("default")
+        //                         .build())
+        //         .build();
+    }
+
+    @Bean
+    public LambdaClient lambdaClient(SdkHttpClient insecureApacheHttpClient) {
+
+        return LambdaClient.builder()
+                .httpClient(insecureApacheHttpClient)
+                .endpointOverride(URI.create(emulatorEndpoint))
                 .region(Region.of(emulatorRegion))
                 .credentialsProvider(
                         ProfileCredentialsProvider.builder()
@@ -139,10 +165,11 @@ public class AwsEmulatorConfig {
     }
 
     @Bean
-    public LambdaClient lambdaClient(SdkHttpClient insecureApacheHttpClient) {
-        return LambdaClient.builder()
+    public CloudWatchLogsClient cloudWatchLogsClient(SdkHttpClient insecureApacheHttpClient) {
+
+        return CloudWatchLogsClient.builder()
                 .httpClient(insecureApacheHttpClient)
-               .endpointOverride(URI.create(emulatorEndpoint))
+                .endpointOverride(URI.create(emulatorEndpoint))
                 .region(Region.of(emulatorRegion))
                 .credentialsProvider(
                         ProfileCredentialsProvider.builder()
@@ -151,6 +178,7 @@ public class AwsEmulatorConfig {
                                 .build())
                 .build();
     }
+
 
     // 使用するサービスのClientを生成する処理を追加する。
 
