@@ -1,4 +1,56 @@
 {
-    "java.configuration.updateBuildConfiguration": "interactive",
-    "java.compile.nullAnalysis.mode": "automatic"
+    "java.compile.nullAnalysis.mode": "disabled",
+    "java.autobuild.enabled": true,
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "always",
+      "source.organizeImports": "always",
+    },
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.import.maven.disableTestClasspathFlag": false,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[java]": {
+      "editor.defaultFormatter": "redhat.java",
+      "editor.tabSize": 4,
+      "editor.insertSpaces": true,
+      "editor.detectIndentation": false,
+    },
+    "[javascript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+    },
+    "[json]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+    },
+    "[xml]": {
+      "editor.defaultFormatter": "redhat.vscode-xml",
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2,
+    },
+    "xml.format.preserveEmptyContent": false,
+    "files.associations": {
+      ".code-workspace": "jsonc",
+      //      "*.css": "tailwindcss",
+    },
+    "[jsonc]": {
+      "editor.tabSize": 2,
+      "editor.insertSpaces": true,
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+    },
+    "java.completion.importOrder": ["java", "javax", "org", "com"],
+    "prettier.requireConfig": true,
+    "editor.scrollbar.horizontalScrollbarSize": 12,
+    "editor.scrollbar.verticalScrollbarSize": 14,
+
+    "css.lint.unknownAtRules": "ignore",
+
+    "scss.lint.unknownAtRules": "ignore",
+    "css.lint.argumentsInColorFunction": "error",
+    "java.debug.settings.hotCodeReplace": "auto",
+    "java.jdt.ls.javac.enabled": "on",
+    "outline.showNull": false,
+    "notebook.defaultFormatter": "esbenp.prettier-vscode",
+    "java.format.settings.profile": "google",
+    "java.format.settings.url": "eclipse-java-google-style.xml",
+    "java.debug.settings.onBuildFailureProceed": true,
+
 }

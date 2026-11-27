@@ -4,10 +4,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.lambda.LambdaClient;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.sqs.SqsClient;
 
 /**
@@ -20,36 +21,52 @@ import software.amazon.awssdk.services.sqs.SqsClient;
  *			<artifactId>signin</artifactId>
  *		</dependency>
  * @formatter:on
+ * ローカルでは環境変数AWS_REGION=ap-northeast-1の設定を行うこと(通常はcompose.yamlで設定されています)。
  * 
- * AwsConfig
  */
 @Profile({ "aws", "awsreal" })
 @Configuration
-public class AwsConfig {
+public class AwsConfig implements AwsServiceConfig {
 
     @Bean
+    @Override
     public S3Client s3Client() {
-        return S3Client.create();
+        return S3Client.builder()
+                .build();
     }
 
     @Bean
+    @Override
+    public S3Presigner s3Presigner() {
+        return S3Presigner.builder()
+                .build();
+    }
+
+    @Bean
+    @Override
     public SqsClient sqsClient() {
         return SqsClient.builder()
-                .region(Region.AP_NORTHEAST_1)
                 .build();
     }
 
     @Bean
+    @Override
     public DynamoDbClient dynamoDbClient() {
         return DynamoDbClient.builder()
-                .region(Region.AP_NORTHEAST_1)
                 .build();
     }
 
     @Bean
+    @Override
     public LambdaClient lambdaClient() {
         return LambdaClient.builder()
-                .region(Region.AP_NORTHEAST_1)
+                .build();
+    }
+
+    @Bean
+    @Override
+    public CloudWatchLogsClient cloudWatchLogsClient() {
+        return CloudWatchLogsClient.builder()
                 .build();
     }
 
